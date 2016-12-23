@@ -2,6 +2,7 @@ package activity.them.im.greendaoapp;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -10,8 +11,6 @@ import com.model.person.DaoMaster;
 import com.model.person.DaoSession;
 import com.model.person.Person;
 import com.model.person.PersonDao;
-import com.model.person_father.FatherDao;
-import com.model.person_father.SonDao;
 
 import java.util.List;
 
@@ -43,8 +42,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         son_father.openDb(MainActivity.this);
         son_father.save();
         son_father.getAll();
-
-
     }
 
     private void openDb() {
@@ -74,6 +71,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+
+        if (TextUtils.isEmpty(et_name.getText().toString())||TextUtils.isEmpty(et_age.getText().toString())) {
+            getAll();
+            return;
+        }
+
         switch (v.getId()) {
             case R.id.btn_add:
                 save();
