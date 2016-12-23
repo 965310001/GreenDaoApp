@@ -6,10 +6,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
-import com.imooc.model.DaoMaster;
-import com.imooc.model.DaoSession;
-import com.imooc.model.Person;
-import com.imooc.model.PersonDao;
+import com.model.person.DaoMaster;
+import com.model.person.DaoSession;
+import com.model.person.Person;
+import com.model.person.PersonDao;
+import com.model.person_father.FatherDao;
+import com.model.person_father.SonDao;
 
 import java.util.List;
 
@@ -35,6 +37,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         et_name= (EditText) findViewById(R.id.et_name);
 
         openDb();
+
+
+        Son_Father son_father = new Son_Father();
+        son_father.openDb(MainActivity.this);
+        son_father.save();
+        son_father.getAll();
+
+
     }
 
     private void openDb() {
