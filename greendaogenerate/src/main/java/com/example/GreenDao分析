@@ -1,0 +1,73 @@
+底层还是通过SQL语句创建，对象-SQL来操作数据库。｛对象/关系映射｝
+
+核心类：
+       DaoMaster：daomaster以一定的模式持有数据库对象（SQLiteDatabase）并管理一些DAO类（而不是对象）。
+       DaoSession:管理指定模式下所有可用的DAO对象，你可以通过某个get方法获取到。DaoSession提供一些通用的持久化方法，比如对实体进行插入，加载，更新，刷新和删除。
+       DAOs（Data access objects）:数据访问对象，用于实体的持久化和查询。对于每一个实体，greenDao会生成一个DAO，相对于DaoSession它拥有更多持久化的方法，比如：加载全部，插入（insertInTx，语境不明了，暂且简单的翻译成插入）
+
+1.创建数据库
+    DaoMaster.DevOpenHelper mHelper= new DaoMaster.DevOpenHelper(MainActivity.this,"Person.db",null);
+    DaoMaster mDaoMaster=new DaoMaster(mHelper.getWritableDatabase());
+    DaoSession mDaoSession=mDaoMaster.newSession();
+    PersonDao mPersonDao=mDaoSession.getPersonDao();
+
+2.创建表<创建表的过程>
+     public static abstract class OpenHelper extends SQLiteOpenHelper {
+
+            public OpenHelper(Context context, String name, CursorFactory factory) {
+                super(context, name, factory, SCHEMA_VERSION);
+            }
+
+            @Override
+            public void onCreate(SQLiteDatabase db) {
+                Log.i("greenDAO", "Creating tables for schema version " + SCHEMA_VERSION);
+                createAllTables(db, false);
+            }
+        }
+
+        /** WARNING: Drops all table on Upgrade! Use only during development. */
+        public static class DevOpenHelper extends OpenHelper {
+            public DevOpenHelper(Context context, String name, CursorFactory factory) {
+                super(context, name, factory);
+            }
+
+            @Override
+            public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+                Log.i("greenDAO", "Upgrading schema from version " + oldVersion + " to " + newVersion + " by dropping all tables");
+                dropAllTables(db, true);
+                onCreate(db);
+            }
+        }
+
+        public static void createAllTables(SQLiteDatabase db, boolean ifNotExists) {
+               PersonDao.createTable(db, ifNotExists);
+           }
+
+
+        public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
+               String constraint = ifNotExists? "IF NOT EXISTS ": "";
+               db.execSQL("CREATE TABLE " + constraint + "\"PERSON\" (" + //
+                       "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
+                       "\"NAME\" TEXT NOT NULL ," + // 1: name
+                       "\"AGE\" INTEGER NOT NULL );"); // 2: age
+           }
+
+
+3.创建实体类（数据模型）
+     // 版本号  包的名字  Schema（对象的集合）
+     Schema mSchema=new Schema(1,"com.model.person");
+
+     // addEntity(String className)  为son添加属性
+     Entity son = mSchema.addEntity("Son");
+
+4.通过实体类操作数据的增删改查
+    mDaoSession.insert(T);
+    mDaoSession.delete(T);
+    mDaoSession.update(T);
+    mDaoSession.queryBuilder(T).list()
+
+    //更好
+    mPersonDao.insert(Person);
+    mDaoSession.delete(T);
+    mDaoSession.update(T);
+    mDaoSession.delete(T);

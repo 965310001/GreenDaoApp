@@ -12,12 +12,12 @@ public class ExampleDaoGenerator {
 
     public static void main(String[] args) throws Exception {
 
-        //版本号  包的名字
         Schema mSchema;
 
-        //单表
+        //单表   版本号  包的名字
         mSchema=new Schema(1,"com.model.person");
         addPerson(mSchema);
+
         new DaoGenerator().generateAll(mSchema, "D:\\AndroidStudioCode\\GreenDaoApp\\app\\src\\main\\java-gen");
 
         //多表  一对一
