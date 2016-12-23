@@ -1,4 +1,4 @@
-package activity.them.im.greendaoapp;
+package com.example;
 
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
